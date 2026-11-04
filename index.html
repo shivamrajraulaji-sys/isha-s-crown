@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#301629">
+  <title>The Crown of Ishaa — Her Royal Moment</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #321b2b;
+      --plum: #4a263d;
+      --rose: #eea8b8;
+      --blush: #f9dce1;
+      --gold: #f1d391;
+      --champagne: #fff1d2;
+      --paper: #fff9f0;
+      --muted: #eadce5;
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: "Trebuchet MS", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: #281321;
+      color: var(--champagne);
+      font-family: var(--sans);
+    }
+    button { font: inherit; }
+    button:focus-visible { outline: 2px solid white; outline-offset: 4px; }
+
+    .scene {
+      position: relative;
+      display: none;
+      min-height: 100svh;
+      isolation: isolate;
+      overflow: hidden;
+      padding: 88px 20px 48px;
+      background:
+        radial-gradient(ellipse at 50% 30%, #87516d88, transparent 56%),
+        linear-gradient(160deg, #26121f, #4a273f 55%, #291522);
+    }
+    .scene.active { display: flex; flex-direction: column; align-items: center; }
+    .scene::before {
+      position: absolute;
+      z-index: -2;
+      inset: 0;
+      content: "";
+      opacity: .7;
+      background:
+        radial-gradient(circle at 12% 18%, #ffe9b530 0 1px, transparent 2px),
+        radial-gradient(circle at 78% 12%, #fff8df55 0 1px, transparent 2px),
+        radial-gradient(circle at 88% 43%, #ffe6c833 0 1px, transparent 2px),
+        radial-gradient(circle at 22% 67%, #fff8df44 0 1px, transparent 2px),
+        radial-gradient(circle at 65% 82%, #fff8df33 0 1px, transparent 2px);
+      background-size: 130px 130px, 190px 190px, 155px 155px, 200px 200px, 170px 170px;
+    }
+
+    .welcome {
+      justify-content: center;
+      text-align: center;
+      background:
+        linear-gradient(180deg, #28152125, #281521be),
+        radial-gradient(ellipse at 50% 100%, #d29a7d66, transparent 43%),
+        linear-gradient(145deg, #563047, #271421 68%);
+    }
+    .welcome::after {
+      position: absolute;
+      z-index: -1;
+      content: "";
+      left: 50%;
+      bottom: 0;
+      width: min(760px, 110vw);
+      height: min(420px, 57vh);
+      transform: translateX(-50%);
+      opacity: .65;
+      background:
+        linear-gradient(90deg, transparent 0 8%, #c98e9a 8% 10%, transparent 10% 18%, #d3a9a0 18% 21%, transparent 21% 79%, #d3a9a0 79% 82%, transparent 82% 90%, #c98e9a 90% 92%, transparent 92%),
+        linear-gradient(0deg, #251522 0 12%, transparent 12%),
+        radial-gradient(ellipse at 50% 93%, #dfaeb0 0 25%, transparent 25.5%);
+      clip-path: polygon(0 100%,0 48%,12% 48%,12% 25%,20% 25%,20% 45%,32% 45%,32% 28%,40% 28%,50% 0,60% 28%,68% 28%,68% 45%,80% 45%,80% 25%,88% 25%,88% 48%,100% 48%,100% 100%);
+      filter: drop-shadow(0 0 35px #f7c5c455);
+    }
+
+    .topbar {
+      position: absolute;
+      z-index: 4;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand {
+      color: #ffeddd;
+      font: 12px var(--serif);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      opacity: .78;
+    }
+    .top-actions { display: flex; gap: 8px; }
+    .utility {
+      border: 1px solid #fff4d944;
+      border-radius: 999px;
+      padding: 9px 13px;
+      color: var(--champagne);
+      background: #351c2baf;
+      cursor: pointer;
+      font-size: 12px;
+      backdrop-filter: blur(8px);
+    }
+    .utility:hover { background: #75425d; }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, p { position: relative; }
+    h1, h2, h3 { font-family: var(--serif); font-weight: 400; }
+    .welcome h1 {
+      max-width: 850px;
+      margin: 0 auto 15px;
+      color: #fff5eb;
+      font-size: clamp(42px, 8vw, 82px);
+      line-height: .98;
+      text-shadow: 0 4px 35px #f1b5c377;
+    }
+    .welcome .subtitle {
+      margin: 0 0 32px;
+      color: #f8dce2;
+      font: clamp(18px, 3vw, 25px) var(--serif);
+      letter-spacing: .08em;
+    }
+    .ornament {
+      margin: 0 auto 17px;
+      color: var(--gold);
+      font-size: 31px;
+      filter: drop-shadow(0 0 12px #f5d894);
+      animation: glow 2.4s ease-in-out infinite alternate;
+    }
+    .button {
+      position: relative;
+      z-index: 2;
+      border: 1px solid #fff0c8;
+      border-radius: 999px;
+      padding: 15px 25px;
+      color: #3c2330;
+      background: linear-gradient(135deg, #fff1d3, #e6bc76 55%, #f6dfaa);
+      box-shadow: 0 0 28px #f2ce8166, inset 0 1px 0 #fff;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .button:hover { transform: translateY(-2px); box-shadow: 0 0 38px #f2ce81aa; }
+    .button.secondary {
+      color: var(--champagne);
+      border-color: #f7d89780;
+      background: #ffffff0c;
+      box-shadow: inset 0 0 18px #f4d18412;
+    }
+    .button.small { padding: 11px 16px; font-size: 10px; }
+    .fine-print { margin-top: 20px; color: #f1d9df99; font-size: 12px; }
+
+    .panel {
+      width: min(700px, 100%);
+      border: 1px solid #f6d79a66;
+      border-radius: 24px;
+      padding: clamp(24px, 6vw, 48px);
+      background: linear-gradient(145deg, #fff7ea12, #25142180);
+      box-shadow: 0 24px 80px #170c1980, inset 0 1px #fff3;
+      backdrop-filter: blur(12px);
+    }
+    .panel h2 {
+      margin: 0 0 14px;
+      color: var(--champagne);
+      font-size: clamp(32px, 6vw, 56px);
+      text-align: center;
+    }
+    .center { text-align: center; }
+    .letter-copy {
+      max-width: 540px;
+      margin: 0 auto 25px;
+      color: #fff0e8;
+      font: clamp(16px, 2.5vw, 19px)/1.9 var(--serif);
+      white-space: pre-line;
+    }
+
+    .envelope {
+      position: relative;
+      width: min(250px, 70vw);
+      height: 160px;
+      margin: 18px auto 34px;
+      border-radius: 9px;
+      background: linear-gradient(145deg, #e6afae, #bd7786);
+      box-shadow: 0 12px 40px #10091466;
+      animation: float 3s ease-in-out infinite;
+    }
+    .envelope::before {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      content: "";
+      background: linear-gradient(34deg, transparent 49.5%, #f0c4bb 50%, transparent 51%) left,
+                  linear-gradient(-34deg, transparent 49.5%, #d9959d 50%, transparent 51%) right;
+      background-size: 50% 100%;
+      background-repeat: no-repeat;
+    }
+    .envelope::after {
+      position: absolute;
+      z-index: 3;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      content: "";
+      border-top: 90px solid #f2c9bd;
+      border-right: 125px solid transparent;
+      border-left: 125px solid transparent;
+      transform-origin: top;
+      transition: transform .8s ease;
+    }
+    .envelope.open::after { transform: rotateX(180deg); }
+    .seal {
+      position: absolute;
+      z-index: 4;
+      top: 68px;
+      left: 50%;
+      display: grid;
+      width: 43px;
+      height: 43px;
+      place-items: center;
+      border: 1px solid #ffe4a8;
+      border-radius: 50%;
+      color: #fff0ce;
+      background: #a64e66;
+      transform: translateX(-50%);
+      box-shadow: 0 0 20px #ffdb9a88;
+    }
+
+    .ceremony { justify-content: center; text-align: center; }
+    .throne {
+      position: relative;
+      display: grid;
+      width: min(300px, 75vw);
+      height: 290px;
+      place-items: center;
+      margin: 8px auto 6px;
+      filter: drop-shadow(0 0 28px #ffcf7650);
+    }
+    .throne svg { position: absolute; width: 100%; height: 100%; }
+    .princess {
+      position: absolute;
+      bottom: 4px;
+      display: grid;
+      width: 124px;
+      height: 167px;
+      place-items: center;
+      border-radius: 65px 65px 18px 18px;
+      background: linear-gradient(180deg, #f8d6d4 0 34%, #b94f73 35% 100%);
+      box-shadow: inset 0 0 25px #fff5, 0 0 25px #f1c88766;
+    }
+    .princess::before {
+      position: absolute;
+      top: 14px;
+      width: 66px;
+      height: 74px;
+      content: "";
+      border-radius: 50% 50% 45% 45%;
+      background: #f2c4ac;
+      box-shadow: 0 -18px 0 5px #593347, 0 4px 0 3px #f4d3bd;
+    }
+    .princess::after {
+      position: absolute;
+      top: 43px;
+      width: 44px;
+      height: 5px;
+      content: "♥";
+      color: #794052;
+      font-size: 13px;
+      text-align: center;
+    }
+    .landing-crown {
+      position: absolute;
+      z-index: 3;
+      top: 40px;
+      font-size: 78px;
+      filter: drop-shadow(0 0 18px #ffe398);
+      transform: translateY(-130vh) rotate(-12deg);
+    }
+    .ceremony.ready .landing-crown { animation: descend 2.7s cubic-bezier(.2,.8,.25,1) forwards, crownGlow 2s 2.7s infinite alternate; }
+    .ceremony.crowned .landing-crown {
+      top: 15px;
+      font-size: 45px;
+      transform: translateY(0);
+      animation: settled 1.1s ease-out forwards, crownGlow 2s 1.1s infinite alternate;
+    }
+    .ceremony h2 {
+      margin: 10px 0 8px;
+      color: var(--gold);
+      font-size: clamp(27px, 5vw, 43px);
+      letter-spacing: .06em;
+    }
+    .ceremony-note { margin: 0 0 22px; color: #f5e1e3; }
+
+    .reign { align-items: center; gap: 22px; }
+    .reign-title {
+      margin: 0;
+      color: var(--gold);
+      font-size: clamp(38px, 8vw, 76px);
+      text-align: center;
+      text-shadow: 0 0 30px #f2c87266;
+      animation: reveal .8s both;
+    }
+    .royal-subtitle {
+      margin: -8px 0 0;
+      color: #fff3ea;
+      font: clamp(16px, 3vw, 23px)/1.65 var(--serif);
+      text-align: center;
+    }
+
+    .certificate {
+      position: relative;
+      width: min(780px, 100%);
+      padding: clamp(26px, 6vw, 54px);
+      color: #513437;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 50%, #fffef6, #f9e9c7),
+        #fff4d7;
+      border: 8px double #c49a52;
+      outline: 1px solid #ffeab0;
+      outline-offset: -15px;
+      box-shadow: 0 18px 60px #130a1a99;
+    }
+    .certificate::before, .certificate::after {
+      position: absolute;
+      color: #bd9149;
+      font-size: 26px;
+      content: "❧";
+    }
+    .certificate::before { top: 12px; left: 20px; }
+    .certificate::after { right: 20px; bottom: 12px; transform: rotate(180deg); }
+    .certificate .cert-crown { font-size: 38px; }
+    .certificate h3 {
+      margin: 8px 0 18px;
+      color: #80522d;
+      font-size: clamp(22px, 4vw, 36px);
+      letter-spacing: .11em;
+    }
+    .certificate p { margin: 8px 0; font: 16px/1.6 var(--serif); }
+    .certificate .name {
+      margin: 12px 0;
+      color: #a04c61;
+      font: clamp(40px, 8vw, 64px) var(--serif);
+      letter-spacing: .16em;
+    }
+    .seal-gold {
+      display: grid;
+      width: 68px;
+      height: 68px;
+      place-items: center;
+      margin: 20px auto 0;
+      border: 3px ridge #f8e6a3;
+      border-radius: 50%;
+      color: #fff2c0;
+      background: radial-gradient(circle at 35% 30%, #ffe58f, #b37b24 70%);
+      box-shadow: 0 0 18px #c38d3488;
+      animation: sealPulse 2.3s infinite;
+    }
+    .cert-sign {
+      margin-top: 16px !important;
+      font-style: italic !important;
+    }
+
+    .scroll-card {
+      width: min(780px, 100%);
+      border: 1px solid #f2d39477;
+      border-radius: 10px 10px 28px 28px;
+      padding: 34px clamp(23px, 6vw, 58px);
+      color: #513437;
+      background: linear-gradient(90deg, #dfc494, #fff1d4 12%, #fff8e9 50%, #f7e5c4 88%, #cfad75);
+      box-shadow: 0 16px 50px #10091277;
+      transform-origin: top center;
+      animation: unroll .9s ease both;
+    }
+    .scroll-card h2 {
+      margin: 0 0 18px;
+      color: #8c4c5d;
+      font-size: 33px;
+      text-align: center;
+    }
+    .scroll-card p { margin: 0; font: 17px/1.95 var(--serif); white-space: pre-line; }
+
+    .controls-grid {
+      display: grid;
+      width: min(780px, 100%);
+      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      gap: 10px;
+    }
+    .interactive-message {
+      display: none;
+      width: min(780px, 100%);
+      margin: 0;
+      border: 1px solid #f3d69766;
+      border-radius: 14px;
+      padding: 16px 20px;
+      color: #fff1df;
+      background: #fff9f010;
+      font: 17px/1.6 var(--serif);
+      text-align: center;
+      animation: reveal .35s ease both;
+    }
+    .interactive-message.visible { display: block; }
+
+    .finale {
+      justify-content: center;
+      text-align: center;
+      background:
+        radial-gradient(ellipse at 50% 84%, #cd698455, transparent 33%),
+        linear-gradient(180deg, #130f26, #321932 65%, #1c1021);
+    }
+    .finale h2 {
+      max-width: 900px;
+      margin: 0 auto 16px;
+      color: #fff2e4;
+      font-size: clamp(25px, 5vw, 44px);
+      line-height: 1.5;
+      text-shadow: 0 0 25px #f5c88466;
+    }
+    .finale .born {
+      display: block;
+      margin: 10px 0;
+      color: var(--gold);
+      font: bold clamp(35px, 8vw, 70px) var(--serif);
+      letter-spacing: .08em;
+    }
+    .castle {
+      width: min(450px, 90vw);
+      height: auto;
+      margin: 0 auto 15px;
+      filter: drop-shadow(0 0 24px #efaac477);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .petals, #fireworks {
+      position: fixed;
+      z-index: 3;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .petal {
+      position: absolute;
+      top: -30px;
+      color: #ffc2d2;
+      opacity: .8;
+      text-shadow: 0 0 12px #ffb1c6;
+      animation: drift linear infinite;
+    }
+    .heart-pop {
+      position: fixed;
+      z-index: 6;
+      pointer-events: none;
+      color: #ffb8d0;
+      font-size: 22px;
+      animation: heartUp 1.7s ease-out forwards;
+    }
+    .footer-note {
+      margin-top: auto;
+      padding-top: 24px;
+      color: #f8dfdb88;
+      font-size: 11px;
+      letter-spacing: .12em;
+    }
+    .hidden { display: none !important; }
+
+    @keyframes glow { to { filter: drop-shadow(0 0 24px #ffe8ad); transform: scale(1.08); } }
+    @keyframes float { 50% { transform: translateY(-9px); } }
+    @keyframes descend {
+      0% { transform: translateY(-130vh) rotate(-20deg); }
+      75% { transform: translateY(5px) rotate(7deg); }
+      88% { transform: translateY(-8px) rotate(-3deg); }
+      100% { transform: translateY(0) rotate(0); }
+    }
+    @keyframes settled { from { transform: translateY(-40px) scale(1.2); } to { transform: translateY(0) scale(1); } }
+    @keyframes crownGlow { to { filter: drop-shadow(0 0 28px #ffe890) brightness(1.25); } }
+    @keyframes sealPulse { 50% { transform: rotate(12deg) scale(1.08); } }
+    @keyframes reveal { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes unroll { from { opacity: .2; transform: perspective(800px) rotateX(-65deg) scaleY(.5); } to { opacity: 1; transform: perspective(800px) rotateX(0) scaleY(1); } }
+    @keyframes drift { to { transform: translate3d(var(--sway), 110vh, 0) rotate(620deg); } }
+    @keyframes heartUp { to { opacity: 0; transform: translateY(-150px) scale(1.8) rotate(20deg); } }
+
+    @media (max-width: 600px) {
+      .scene { padding: 84px 16px 36px; }
+      .topbar { top: 12px; left: 12px; right: 12px; }
+      .brand { max-width: 110px; font-size: 9px; line-height: 1.5; }
+      .utility { padding: 8px 10px; font-size: 10px; }
+      .certificate { border-width: 6px; outline-offset: -11px; }
+      .scroll-card p { font-size: 16px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="petals" aria-hidden="true"></div>
+  <canvas id="fireworks" aria-hidden="true"></canvas>
+
+  <header class="topbar">
+    <span class="brand">The Crown of Ishaa</span>
+    <div class="top-actions">
+      <button class="utility" id="soundButton" type="button" aria-pressed="false">♫ Sound: Off</button>
+      <button class="utility restart-button" type="button">↺ Restart</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="scene welcome active" id="welcome" aria-labelledby="welcome-title">
+      <div class="ornament" aria-hidden="true">♕</div>
+      <p class="eyebrow">A little fairytale, made just for you</p>
+      <h1 id="welcome-title">A Royal Invitation<br>Awaits You...</h1>
+      <p class="subtitle">To My Beautiful Princess, Ishaa</p>
+      <button class="button" data-go="invitation">Enter Your Kingdom 👑</button>
+      <p class="fine-print">A magical moment is waiting inside ✨</p>
+    </section>
+
+    <section class="scene" id="invitation" aria-labelledby="invitation-title">
+      <div class="panel center">
+        <p class="eyebrow">Sealed with all my love</p>
+        <div class="envelope" id="envelope" aria-hidden="true"><span class="seal">♥</span></div>
+        <h2 id="invitation-title">A letter for my princess</h2>
+        <p class="letter-copy">Dear Ishaa,
+
+Some girls are beautiful.
+Some girls are extraordinary.
+But you, my love, are a whole fairytale.
+
+Today, I have something special for you.
+You are invited to receive something you have always deserved.</p>
+        <button class="button" data-go="ceremony">Continue to Your Destiny</button>
+      </div>
+    </section>
+
+    <section class="scene ceremony ready" id="ceremony" aria-labelledby="ceremony-title">
+      <p class="eyebrow">The moment your heart has been waiting for</p>
+      <div class="throne" aria-label="A princess illustration seated on a royal throne">
+        <svg viewBox="0 0 300 290" role="img" aria-label="Golden royal throne">
+          <defs>
+            <linearGradient id="throneGold" x2="0" y2="1">
+              <stop stop-color="#ffe8a6"/><stop offset=".5" stop-color="#c99445"/><stop offset="1" stop-color="#80502d"/>
+            </linearGradient>
+          </defs>
+          <path d="M56 263V107Q56 24 150 17Q244 24 244 107V263Z" fill="url(#throneGold)" stroke="#ffedb9" stroke-width="5"/>
+          <path d="M79 245V111Q79 55 150 49Q221 55 221 111V245Z" fill="#6a344b" stroke="#ffe0a0" stroke-width="4"/>
+          <path d="M46 164H254V263H46Z" fill="url(#throneGold)" stroke="#ffe6aa" stroke-width="4"/>
+          <path d="M72 266L60 286M228 266L240 286" stroke="#e9c276" stroke-width="12" stroke-linecap="round"/>
+          <path d="M150 76l8 18 20 2-15 13 5 20-18-11-18 11 5-20-15-13 20-2Z" fill="#fbe8ae"/>
+        </svg>
+        <div class="princess"><span class="landing-crown" aria-hidden="true">👑</span></div>
+      </div>
+      <h2 id="ceremony-title">Every Princess Deserves Her Crown</h2>
+      <p class="ceremony-note" id="ceremonyNote">Your royal moment is almost here, Ishaa.</p>
+      <button class="button" id="crownButton" type="button">Crown Me 👑</button>
+      <button class="button secondary small hidden" id="revealButton" type="button">See Your Royal Title ✨</button>
+    </section>
+
+    <section class="scene reign" id="reign" aria-labelledby="reign-title">
+      <p class="eyebrow">By the power of love and a little bit of magic</p>
+      <h2 class="reign-title" id="reign-title">All Hail Queen Ishaa!</h2>
+      <p class="royal-subtitle">Officially declared:<br><strong>The Most Beautiful Princess of My Kingdom.</strong><br><br>Your beauty deserves a crown.<br>Your heart deserves a kingdom.<br>And your smile deserves the whole universe.</p>
+
+      <article class="certificate" id="certificate" aria-label="Royal Certificate of Eternity">
+        <div class="cert-crown">♕</div>
+        <h3>Royal Certificate of Eternity</h3>
+        <p>This certificate officially recognizes</p>
+        <div class="name">ISHAA</div>
+        <p>as the one and only Princess and Queen<br>of my heart.</p>
+        <div class="seal-gold" aria-label="Animated gold seal">♛</div>
+        <p class="cert-sign">Signed: Your Forever Admirer ❤️</p>
+      </article>
+      <button class="button small" id="downloadButton" type="button">Download Your Certificate as PNG</button>
+
+      <article class="scroll-card">
+        <h2>A Letter from Your King</h2>
+        <p>My Princess,
+
+I don't need a kingdom to be a king.
+I don't need a throne to feel royal.
+Because having you in my life already makes me feel like I own the most beautiful treasure in the universe.
+
+You don't have to prove that you are special.
+You simply are.
+
+And if I could give you one thing in this world, it would be the ability to see yourself through my eyes, just once.
+
+Then you would understand why I call you my princess.</p>
+      </article>
+
+      <div class="controls-grid" aria-label="More royal surprises">
+        <button class="button secondary small" id="anotherCrown" type="button">Give Me Another Crown</button>
+        <button class="button secondary small" id="wishButton" type="button">Make a Royal Wish</button>
+        <button class="button secondary small" id="treasureButton" type="button">Open My Secret Treasure</button>
+        <button class="button small" id="surpriseButton" type="button">One Last Surprise ✨</button>
+      </div>
+      <p class="interactive-message" id="interactiveMessage" aria-live="polite"></p>
+      <p class="footer-note">Made with love, just for Queen Ishaa ❤️</p>
+    </section>
+
+    <section class="scene finale" id="finale" aria-labelledby="finale-title">
+      <p class="eyebrow">And now, one last thing from my heart...</p>
+      <svg class="castle" viewBox="0 0 450 250" role="img" aria-label="A glowing castle beneath the stars">
+        <defs>
+          <linearGradient id="castleFill" x2="0" y2="1">
+            <stop stop-color="#f8d89a"/><stop offset="1" stop-color="#a44f76"/>
+          </linearGradient>
+        </defs>
+        <path d="M20 231V121h65V81h42v40h27V58l30-37 30 37v63h26V86h43v35h42V74l34-42 34 42v47h37v102Z" fill="url(#castleFill)" stroke="#ffe7ad" stroke-width="3"/>
+        <path d="M184 231v-75q0-34 41-34t41 34v75" fill="#392039" stroke="#ffe2a0" stroke-width="4"/>
+        <path d="M58 148h24v34H58zm76 0h24v34h-24zm161 0h24v34h-24zm77 0h24v34h-24z" fill="#ffedb1"/>
+        <path d="M225 19V0m-10 14 10-14 10 14" stroke="#ffe7ad" stroke-width="4"/>
+      </svg>
+      <h2 id="finale-title">Happy Birthday to the girl who makes my world magical.<span class="born">You Were Born to Be One.</span>I LOVE YOU, MY QUEEN ISHAA. ❤️👑</h2>
+      <button class="button" type="button" id="finalRestart">Relive Your Royal Moment ↺</button>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const scenes = [...document.querySelectorAll(".scene")];
+      const envelope = document.getElementById("envelope");
+      const ceremony = document.getElementById("ceremony");
+      const fireworksCanvas = document.getElementById("fireworks");
+      const ctx = fireworksCanvas.getContext("2d");
+      const soundButton = document.getElementById("soundButton");
+      const message = document.getElementById("interactiveMessage");
+      const wishes = [
+        "May every day bring you a reason to smile, and may you always know how deeply you are loved. ✨",
+        "I wish you a life as beautiful, bright, and extraordinary as your heart. 💖",
+        "May your dreams find their way to you—and may I always be cheering you on. 🌙",
+        "My wish? That you could borrow my eyes for a moment and see how wonderful you are. 👑",
+        "May the universe return to you all the warmth and happiness you give to everyone around you. 🌟"
+      ];
+      let audioContext = null;
+      let musicOn = false;
+      let musicOscillators = [];
+      let particles = [];
+      let animationFrame = 0;
+      let crownNumber = 0;
+      let messageTimer;
+
+      function showScene(id) {
+        scenes.forEach(scene => scene.classList.toggle("active", scene.id === id));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        if (id === "invitation") {
+          envelope.classList.remove("open");
+          requestAnimationFrame(() => setTimeout(() => envelope.classList.add("open"), 180));
+        }
+        if (id === "ceremony") {
+          ceremony.classList.remove("crowned");
+          ceremony.classList.add("ready");
+          document.getElementById("crownButton").classList.remove("hidden");
+          document.getElementById("revealButton").classList.add("hidden");
+          document.getElementById("ceremonyNote").textContent = "Your royal moment is almost here, Ishaa.";
+        }
+        if (id === "finale") launchFireworks(180);
+      }
+
+      document.querySelectorAll("[data-go]").forEach(button => {
+        button.addEventListener("click", () => {
+          unlockAudio();
+          playTone(660, .16, "sine", .055);
+          showScene(button.dataset.go);
+        });
+      });
+
+      document.getElementById("crownButton").addEventListener("click", () => {
+        unlockAudio();
+        ceremony.classList.add("crowned");
+        document.getElementById("ceremonyNote").textContent = "The crown has found its queen. Long may you shine! ✨";
+        document.getElementById("crownButton").classList.add("hidden");
+        document.getElementById("revealButton").classList.remove("hidden");
+        launchFireworks(100);
+        playChord();
+        heartBurst(24);
+      });
+      document.getElementById("revealButton").addEventListener("click", () => showScene("reign"));
+
+      document.getElementById("anotherCrown").addEventListener("click", () => {
+        const crowns = ["👑", "♕", "♛", "💎👑"];
+        crownNumber++;
+        const crown = document.querySelector(".landing-crown");
+        crown.textContent = crowns[crownNumber % crowns.length];
+        crown.animate(
+          [{ transform: "translateY(0) rotate(0) scale(1)" }, { transform: "translateY(-28px) rotate(20deg) scale(1.35)" }, { transform: "translateY(0) rotate(0) scale(1)" }],
+          { duration: 850, easing: "ease-out" }
+        );
+        announce("Another crown for the queen who deserves them all! " + crowns[crownNumber % crowns.length]);
+        launchFireworks(38);
+        playTone(880, .22, "sine", .05);
+      });
+
+      document.getElementById("wishButton").addEventListener("click", () => {
+        announce(wishes[Math.floor(Math.random() * wishes.length)]);
+        playTone(740, .2, "sine", .045);
+      });
+
+      document.getElementById("treasureButton").addEventListener("click", event => {
+        const button = event.currentTarget;
+        const text = "My secret treasure is this: no matter how many fairytales I could write, my favorite story will always be the one where I get to love you. You are my once-in-a-lifetime magic. ❤️";
+        announce(text);
+        button.textContent = "Treasure Opened
