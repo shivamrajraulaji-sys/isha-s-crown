@@ -1276,5 +1276,22 @@
       }
     })();
   </script>
+  <script>
+function enterKingdom() {
+    const welcome = document.getElementById("welcome-screen");
+    const invitation = document.getElementById("invitation-screen");
+
+    if (welcome && invitation) {
+        welcome.style.display = "none";
+        invitation.style.display = "flex";
+
+        invitation.scrollIntoView({
+            behavior: "smooth"
+        });
+    } else {
+        alert("Royal Kingdom is loading! 👑");
+    }
+}
+</script>
 </body>
 </html>
